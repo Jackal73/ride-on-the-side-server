@@ -16,7 +16,7 @@ const carSchema = new mongoose.Schema({
   rentPerHour : {type : String, required : true}
 
 }, {timeStamps : true}
-);
+)
 
 const carModel = mongoose.model('cars' , carSchema)
 module.exports = carModel
