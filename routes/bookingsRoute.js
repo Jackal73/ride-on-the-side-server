@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/bookingModel");
 const Car = require("../models/carModel");
-const stripe = require('stripe')('sk_test_51KOtvLAN05eIhtIj6p0kYXbJhITQ0WBhFiyXjEwrCaiDr5QxMC7ixnDRVTbRlKAL1CxpiGMpzhjUozgqzB7tvmip00f56gShQ4')
 const { v4: uuidv4 } = require("uuid");
+const stripe = require("stripe")(
+  "sk_test_51KOtvLAN05eIhtIj6p0kYXbJhITQ0WBhFiyXjEwrCaiDr5QxMC7ixnDRVTbRlKAL1CxpiGMpzhjUozgqzB7tvmip00f56gShQ4"
+);
+
+// const { route } = require("express/lib/router");
 
 router.post('/bookcar', async (req, res) => {
 
@@ -13,20 +17,20 @@ router.post('/bookcar', async (req, res) => {
     const customer = await stripe.customers.create({
       email : token.email,
       source : token.id
-    })
+    });
 
     const payment = await stripe.charges.create({
       amount : req.body.totalAmount * 100,
       currency : 'usd',
       customer : customer.id,
       receipt_email : token.email
-    }, {
+    },
+    {
       idempotencyKey : uuidv4(),
     }
     );
 
-    if(payment)
-    {
+    if(payment) {
       req.body.transactionId = payment.source.id
       const newbooking = new Booking(req.body);
       await newbooking.save();
@@ -46,5 +50,14 @@ router.post('/bookcar', async (req, res) => {
       return res.status(400).json(error);
     }
 });
+
+router.get('/getallbookings', async(req, res) => {
+  try {
+    const bookings = await Booking.find().populate('car');
+    res.send(bookings)
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+})
 
 module.exports = router;
