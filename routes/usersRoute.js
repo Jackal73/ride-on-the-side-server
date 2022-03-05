@@ -1,4 +1,4 @@
-const { response } = require("express");
+
 const express = require("express");
 const router = express.Router();
 const User = require("../models/userModel");
@@ -29,6 +29,15 @@ router.post('/register', async (req, res) => {
       res.send('User registered successfully');
   } catch (error) {
     return res.status(400).json(error);
+  }
+});
+
+router.get("/getallusers", async(req, res) =>{
+  try {
+    const users = await User.find();
+    res.send(users);
+  } catch (error) {
+      return res.status(400).json(error);
   }
 });
 
