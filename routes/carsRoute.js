@@ -11,4 +11,14 @@ router.get("/getallcars", async(req, res) =>{
   }
 });
 
+router.post("/addcar", async(req, res) =>{
+  try {
+    const newcar = new Car(req.body)
+    await newcar.save();
+    res.send("The New Car was added successfully");
+  } catch (error) {
+      return res.status(400).json(error);
+  }
+});
+
 module.exports = router;
