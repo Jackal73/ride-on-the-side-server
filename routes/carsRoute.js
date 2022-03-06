@@ -21,4 +21,21 @@ router.post("/addcar", async(req, res) =>{
   }
 });
 
+router.post("/editcar", async(req, res) => {
+  try { 
+    const car = await Car.findOne({_id : req.body._id})
+
+    // Add statically to avoid mongoDB _id issues
+    car.name = req.body.name;
+    car.image = req.body.image;
+    car.fuelType = req.body.fuelType;
+    car.rentPerHour = req.body.rentPerHour;
+    car.capacity = req.body.capacity;
+
+    await car.save();
+    res.send("The Car was updated successfully");
+  } catch (error) {
+      return res.status(400).json(error);
+  }
+});
 module.exports = router;
